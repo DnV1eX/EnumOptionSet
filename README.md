@@ -1,5 +1,5 @@
 # EnumOptionSet
-[@EnumOptionSet](https://github.com/DnV1eX/EnumOptionSet) is a Swift attached member macro to declare option sets using an enumeration notation.
+[`@EnumOptionSet`](https://github.com/DnV1eX/EnumOptionSet) is a Swift attached member macro to declare option sets using an enumeration notation.
 
 ## Purpose
 The built-in [OptionSet](https://developer.apple.com/documentation/swift/optionset#overview) declaration syntax in Swift is quite cumbersome and repetitive:
@@ -23,10 +23,10 @@ enum ShippingOption {
 }
 ```
 > [!NOTE]
-> The macro generates a nested `Set` structure with options extracted from the names of enumerated cases.
+> The macro generates a nested `Set` structure that conforms to the `OptionSet` protocol, using `Int` as the default raw value type and extracting options from the names of enum cases in the order of declaration.
 > It also generates the `all` property as an option composition, along with some other helper members.
 
-Then you can create a typealias and extend it with additional composite options:
+Then you can create a typealias, and extend the option set with additional composite options:
 ```Swift
 typealias ShippingOptions = ShippingOption.Set
 extension ShippingOptions {
@@ -56,8 +56,7 @@ enum ShippingOption: Int {
 > Enum raw values expressed otherwise than by `Int` literals are ignored. The enum raw value can be declared as an arbitrary type.
 > Conformance to `CaseIterable` is also not required.
 
-Another big advantage of the macro over the built-in declaration is that it checks for index duplication and raw value overflow.
-A compile-time check is performed on the type name and a runtime assertion is added using the `bitWidth` property of the `FixedWidthInteger` raw value type.
+Another significant advantage of the macro is that it provides additional safety checks not found in the built-in declaration. Specifically, it performs checks for duplicate indices and raw value overflow. At compile-time, the macro determines the raw value bitset size based on the type name, and at runtime, it adds an assertion using the `bitWidth` property of the [`FixedWidthInteger`](https://developer.apple.com/documentation/swift/fixedwidthinteger) raw value type.
 
 Both of checks can be disabled with the `ignoreOverflow` attribute flag:
 ```Swift
@@ -67,7 +66,7 @@ enum ShippingOption: Int {
 }
 ```
 > [!NOTE]
-> The raw values of overflowed options are set to zero and these options are ignored.
+> In case of ignoring overflow, raw values that exceed the type capacity are set to zero, thereby excluding the corresponding options from the set.
 
 ## Other goodies
 The macro generates easy to read `description` and `debugDescription` properties:
@@ -99,7 +98,7 @@ Then, simply **import EnumOptionSet** and add the **@EnumOptionSet** attribute b
 
 ## References
 - Proposal for adding a variant of this macro to the standard library (it never happened) with detailed discussion: [[Pitch] `@OptionSet` macro](https://forums.swift.org/t/pitch-optionset-macro/63547).
-- Also try [@EnumRawValues](https://github.com/DnV1eX/EnumRawValues) - Swift macro that enables full-fledged raw values for enumerations.
+- Also try [`@EnumRawValues`](https://github.com/DnV1eX/EnumRawValues) - a Swift macro that enables full-fledged raw values for enumerations.
 
 ## License
 Copyright © 2024 DnV1eX. All rights reserved. Licensed under the Apache License, Version 2.0.
