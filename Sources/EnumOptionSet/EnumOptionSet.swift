@@ -20,9 +20,10 @@
 ///
 /// - Parameters:
 ///   - rawValueType: The raw value type of the generated option set. Defaults to `Int`.
-///   - ignoreOverflow: The flag to disable raw value overflow check. Defaults to `false`.
+///   - checkOverflow: The flag to enable raw value overflow check. Defaults to `true`.
+///   - generateDescription: The flag to generate `description` and `debugDescription`. Defaults to `true`.
 @attached(member, names: named(Set))
-public macro EnumOptionSet<RawValue: FixedWidthInteger>(ignoreOverflow: Bool = false) = #externalMacro(module: "EnumOptionSetMacros", type: "EnumOptionSetMacro")
+public macro EnumOptionSet<RawValue: FixedWidthInteger>(checkOverflow: Bool = true, generateDescription: Bool = true) = #externalMacro(module: "EnumOptionSetMacros", type: "EnumOptionSetMacro")
 
 /// Macro to declare option set using an enumeration notation.
 ///
@@ -35,9 +36,10 @@ public macro EnumOptionSet<RawValue: FixedWidthInteger>(ignoreOverflow: Bool = f
 ///
 /// - Parameters:
 ///   - rawValueType: The raw value type of the generated option set. Defaults to `Int`.
-///   - ignoreOverflow: The flag to disable raw value overflow check. Defaults to `false`.
+///   - checkOverflow: The flag to enable raw value overflow check. Defaults to `true`.
+///   - generateDescription: The flag to generate `description` and `debugDescription`. Defaults to `true`.
 @attached(member, names: named(Set))
-public macro EnumOptionSet<RawValue: FixedWidthInteger>(_ rawValueType: RawValue.Type = Int.self, ignoreOverflow: Bool = false) = #externalMacro(module: "EnumOptionSetMacros", type: "EnumOptionSetMacro")
+public macro EnumOptionSet<RawValue: FixedWidthInteger>(_ rawValueType: RawValue.Type = Int.self, checkOverflow: Bool = true, generateDescription: Bool = true) = #externalMacro(module: "EnumOptionSetMacros", type: "EnumOptionSetMacro")
 
 extension FixedWidthInteger {
     /// The number’s binary representation, split into 8-bit chunks.

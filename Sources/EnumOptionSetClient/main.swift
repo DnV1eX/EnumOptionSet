@@ -29,7 +29,7 @@ enum ShippingOption: Int {
 }
 typealias ShippingOptions = ShippingOption.Set
 extension ShippingOptions {
-    static let express: Self = [.nextDay, .secondDay]
+    static let express: Self = [nextDay, secondDay]
 }
 assert(ShippingOptions.standard.rawValue == 16)
 assert(ShippingOptions.RawValue.bitWidth == 8)
@@ -40,3 +40,6 @@ var shippingOptions = ShippingOptions.all
 assert(shippingOptions == [.express, .priority, .standard])
 shippingOptions[.express].toggle()
 assert(shippingOptions == [.priority, .standard])
+
+shippingOptions = .init(options: [.secondDay, .priority])
+assert(shippingOptions.options == [.secondDay, .priority])
