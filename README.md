@@ -77,7 +77,7 @@ ShippingOptions.express.debugDescription // "OptionSet(0b00000011)"
 The `CustomStringConvertible` and `CustomDebugStringConvertible` protocol conformance can be disabled by setting the `generateDescription` attribute flag to `false`.
 
 ### Cases
-The `OptionSet` maintains a connection to the enum through the `cases` property and initializer.
+The `OptionSet` maintains a connection to the enum through the `cases` property and initializer:
 ```Swift
 let shippingOptions = ShippingOptions(cases: [.secondDay, .priority])
 shippingOptions.cases // [ShippingOption.secondDay, ShippingOption.priority]
