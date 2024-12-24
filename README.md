@@ -23,7 +23,7 @@ enum ShippingOption {
 }
 ```
 > [!NOTE]
-> The macro generates a nested `Set` structure that conforms to the `OptionSet` protocol, using `Int` as the default raw value type and extracting options from the names of enum cases in the order of declaration.
+> The macro generates a nested `Set` structure that conforms to the `OptionSet` protocol, using `Int` as the default raw value type and extracting options from the names of enum cases in the order of declaration.\
 > It also generates the `all` property as an option composition, along with some other helper members.
 
 Then you can create a typealias, and extend the option set with additional composite options:
@@ -46,20 +46,21 @@ enum ShippingOption: Int {
 }
 ```
 > [!TIP]
-> The `OptionSet.RawValue` type can also be declared as the macro's first argument `@EnumOptionSet(Int8.self)`.
+> The `OptionSet.RawValue` type can also be declared as the macro's first argument `@EnumOptionSet(Int8.self)`.\
 > Currently, an even shorter form `@EnumOptionSet(Int8)` works, but this may be a bug of the Swift syntax analyzer, so use it at your own risk.
 
 > [!NOTE]
-> Enum raw values that are expressed in ways other than integer literals, as well as associated values, are ignored.
+> Enum raw values that are expressed in ways other than integer literals, as well as associated values, are ignored.\
 > The enum's `RawValue` can be declared as an arbitrary type or omitted, conformance to `CaseIterable` is also not required.
 
-Another significant advantage of the macro is that it provides additional safety checks not found in the built-in declaration. Specifically, it performs checks for duplicate indices and raw value overflow. At compile-time, the macro determines the raw value bitset size based on the type name, and at runtime, it adds an assertion using the `bitWidth` property of the [`FixedWidthInteger`](https://developer.apple.com/documentation/swift/fixedwidthinteger) raw value type.
+Another significant advantage of the macro is that it provides additional safety checks not found in the built-in declaration.\
+Specifically, it performs checks for duplicate indices and raw value overflow. At compile-time, the macro determines the raw value bitset size based on the type name, and at runtime, it adds an assertion using the `bitWidth` property of the [`FixedWidthInteger`](https://developer.apple.com/documentation/swift/fixedwidthinteger) raw value type.
 
 Both of checks can be disabled with the `checkOverflow` attribute flag:
 ```Swift
 @EnumOptionSet<Int8>(checkOverflow: false)
 enum ShippingOption: Int {
-    case nextDay, secondDay, priority, standard = 8 // Option bit index 8 exceeds the size of 'Int8'.
+    case nextDay, secondDay, priority, standard = 8 // Option bit index 8 is out of range for 'Int8'.
 }
 ```
 > [!NOTE]
@@ -92,8 +93,9 @@ shippingOptions[.express].toggle()
 shippingOptions[.priority] = shippingOptions[.standard]
 shippingOptions == .all // true
 ```
-
+\
 There are also multiple format checks and syntax fix suggestions.
+
 The macro code is fully covered by unit tests.
 
 ## Installation
@@ -110,6 +112,7 @@ Then, simply **import EnumOptionSet** and add the **@EnumOptionSet** attribute b
 
 > [!IMPORTANT]
 > I hope you enjoy the project and find it useful. Please bookmark it with ⭐️ and feel free to share your feedback. Thank you!
+> 
 > Also try [`@EnumRawValues`](https://github.com/DnV1eX/EnumRawValues) - a Swift macro that enables full-fledged raw values for enumerations.
 
 ## License
