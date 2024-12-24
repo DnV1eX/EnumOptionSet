@@ -195,10 +195,10 @@ public struct EnumOptionSetMacro: MemberMacro {
             """
 
         // Generates static constants for set options.
-        let members = try enumeratedElementNames.map { index, name in
-            var member = try VariableDeclSyntax("\(accessModifier)static let \(raw: name) = Self(bitIndex: \(raw: index))")
-            member.leadingTrivia = "/// `\(enumeration.name.text).\(optionSetStructName)(rawValue: 1 << \(index))`\n"
-            return member
+        let options = try enumeratedElementNames.map { index, name in
+            var option = try VariableDeclSyntax("\(accessModifier)static let \(raw: name) = Self(bitIndex: \(raw: index))")
+            option.leadingTrivia = "/// `\(enumeration.name.text).\(optionSetStructName)(rawValue: 1 << \(index))` option.\n"
+            return option
         }
 
         // Generates a static constant for the combination of all set options if the name is not already used in one of the options.
@@ -258,32 +258,32 @@ public struct EnumOptionSetMacro: MemberMacro {
             }
         }
 
-        var options: VariableDeclSyntax?
-        var initOptions: InitializerDeclSyntax?
+        var cases: VariableDeclSyntax?
+        var initCases: InitializerDeclSyntax?
         if !hasAssociatedValues {
             // Generates a computed property returning an array of enum cases corresponding to the bit mask.
-            options = try VariableDeclSyntax("\(accessModifier)var options: [\(enumeration.name.trimmed)]") { """
-                [\(raw: caseElements.map { "(Self.\($0.name.text), ShippingOption.\($0.name.text))" }.joined(separator: ", "))].reduce(into: []) { result, option in
-                    if contains(option.0) {
-                        result.append(option.1)
+            cases = try VariableDeclSyntax("\(accessModifier)var cases: [\(enumeration.name.trimmed)]") { """
+                [\(raw: caseElements.map { "(Self.\($0.name.text), \(enumeration.name.text).\($0.name.text))" }.joined(separator: ", "))].reduce(into: []) { result, element in
+                    if contains(element.0) {
+                        result.append(element.1)
                     }
                 }
                 """
             }
-            options?.leadingTrivia = "/// Array of `\(enumeration.name.text)` enum cases in the `rawValue` bit mask, ordered by declaration.\n"
+            cases?.leadingTrivia = "/// Array of `\(enumeration.name.text)` enum cases in the `rawValue` bit mask, ordered by declaration.\n"
 
-            // Generates an initializer with `options`.
-            initOptions = try InitializerDeclSyntax("\(accessModifier)init(options: [\(enumeration.name.trimmed)])") { """
-                self = [\(raw: caseElements.map { "(Self.\($0.name.text), ShippingOption.\($0.name.text))" }.joined(separator: ", "))].reduce(into: []) { result, option in
-                    if options.contains(option.1) {
-                        result.formUnion(option.0)
+            // Generates an initializer with `cases`.
+            initCases = try InitializerDeclSyntax("\(accessModifier)init(cases: [\(enumeration.name.trimmed)])") { """
+                self = [\(raw: caseElements.map { "(Self.\($0.name.text), \(enumeration.name.text).\($0.name.text))" }.joined(separator: ", "))].reduce(into: []) { result, element in
+                    if cases.contains(element.1) {
+                        result.formUnion(element.0)
                     }
                 }
                 """
             }
-            initOptions?.leadingTrivia = """
+            initCases?.leadingTrivia = """
                 /// Creates a new option set with the specified array of `\(enumeration.name.text)` enum cases.
-                /// - Parameter options: The array of `\(enumeration.name.text)` enum cases corresponding to the `rawValue` bit mask.\n
+                /// - Parameter cases: The array of `\(enumeration.name.text)` enum cases corresponding to the `rawValue` bit mask.\n
                 """
         }
 
@@ -292,14 +292,14 @@ public struct EnumOptionSetMacro: MemberMacro {
             rawValue
             initRawValue
             initBitIndex
-            members
+            options
             if let combination { combination }
             bitIndices
             initBitIndices
             if let description { description }
             if let debugDescription { debugDescription }
-            if let options { options }
-            if let initOptions { initOptions }
+            if let cases { cases }
+            if let initCases { initCases }
         }
 
         return [.init(setStructure)]

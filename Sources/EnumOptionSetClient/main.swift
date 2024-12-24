@@ -12,7 +12,7 @@
 import EnumOptionSet
 
 //struct ShippingOptions: OptionSet {
-//    let rawValue: Int
+//    let rawValue: UInt8
 //
 //    static let nextDay = Self(rawValue: 1 << 0)
 //    static let secondDay = Self(rawValue: 1 << 1)
@@ -23,7 +23,7 @@ import EnumOptionSet
 //    static let all: Self = [.express, .priority, .standard]
 //}
 
-@EnumOptionSet<Int8>
+@EnumOptionSet<UInt8>
 enum ShippingOption: Int {
     case nextDay, secondDay, priority = 3, standard
 }
@@ -41,5 +41,5 @@ assert(shippingOptions == [.express, .priority, .standard])
 shippingOptions[.express].toggle()
 assert(shippingOptions == [.priority, .standard])
 
-shippingOptions = .init(options: [.secondDay, .priority])
-assert(shippingOptions.options == [.secondDay, .priority])
+shippingOptions = .init(cases: [.secondDay, .priority])
+assert(shippingOptions.cases == [.secondDay, .priority])

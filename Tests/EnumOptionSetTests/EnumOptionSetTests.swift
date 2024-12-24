@@ -39,14 +39,14 @@ func rawValueExpandedSource(_ type: String) -> String {
     """
 }
 
-let defaultMembersExpandedSource = """
-            /// `ShippingOption.Set(rawValue: 1 << 0)`
+let defaultOptionsExpandedSource = """
+            /// `ShippingOption.Set(rawValue: 1 << 0)` option.
             static let nextDay = Self(bitIndex: 0)
-            /// `ShippingOption.Set(rawValue: 1 << 1)`
+            /// `ShippingOption.Set(rawValue: 1 << 1)` option.
             static let secondDay = Self(bitIndex: 1)
-            /// `ShippingOption.Set(rawValue: 1 << 2)`
+            /// `ShippingOption.Set(rawValue: 1 << 2)` option.
             static let priority = Self(bitIndex: 2)
-            /// `ShippingOption.Set(rawValue: 1 << 3)`
+            /// `ShippingOption.Set(rawValue: 1 << 3)` option.
             static let standard = Self(bitIndex: 3)
     """
 
@@ -87,22 +87,22 @@ func descriptionExpandedSource(_ names: String) -> String {
     """
 }
 
-func optionsExpandedSource(_ options: String) -> String {
+func casesExpandedSource(_ elements: String) -> String {
     """
             /// Array of `ShippingOption` enum cases in the `rawValue` bit mask, ordered by declaration.
-            var options: [ShippingOption] {
-                \(options).reduce(into: []) { result, option in
-                    if contains(option.0) {
-                        result.append(option.1)
+            var cases: [ShippingOption] {
+                \(elements).reduce(into: []) { result, element in
+                    if contains(element.0) {
+                        result.append(element.1)
                     }
                 }
             }
             /// Creates a new option set with the specified array of `ShippingOption` enum cases.
-            /// - Parameter options: The array of `ShippingOption` enum cases corresponding to the `rawValue` bit mask.
-            init(options: [ShippingOption]) {
-                self = \(options).reduce(into: []) { result, option in
-                    if options.contains(option.1) {
-                        result.formUnion(option.0)
+            /// - Parameter cases: The array of `ShippingOption` enum cases corresponding to the `rawValue` bit mask.
+            init(cases: [ShippingOption]) {
+                self = \(elements).reduce(into: []) { result, element in
+                    if cases.contains(element.1) {
+                        result.formUnion(element.0)
                     }
                 }
             }
@@ -112,11 +112,11 @@ func optionsExpandedSource(_ options: String) -> String {
 let defaultSetStructExpandedSource = """
         struct Set: OptionSet, CustomStringConvertible, CustomDebugStringConvertible {
     \(rawValueExpandedSource("Int"))
-    \(defaultMembersExpandedSource)
+    \(defaultOptionsExpandedSource)
     \(defaultCombinationExpandedSource)
     \(bitIndicesExpandedSource)
     \(descriptionExpandedSource(#"[0: "nextDay", 1: "secondDay", 2: "priority", 3: "standard"]"#))
-    \(optionsExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)]"))
+    \(casesExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)]"))
         }
     """
 
@@ -135,13 +135,13 @@ let publicEnumExpandedSource = #"""
                 assert((0 ..< RawValue.bitWidth).contains(bitIndex), "Option bit index \(bitIndex) is out of range for 'UInt8'")
                 self.init(rawValue: 1 << bitIndex)
             }
-            /// `ShippingOption.Set(rawValue: 1 << 0)`
+            /// `ShippingOption.Set(rawValue: 1 << 0)` option.
             public static let nextDay = Self(bitIndex: 0)
-            /// `ShippingOption.Set(rawValue: 1 << 1)`
+            /// `ShippingOption.Set(rawValue: 1 << 1)` option.
             public static let secondDay = Self(bitIndex: 1)
-            /// `ShippingOption.Set(rawValue: 1 << 2)`
+            /// `ShippingOption.Set(rawValue: 1 << 2)` option.
             public static let priority = Self(bitIndex: 2)
-            /// `ShippingOption.Set(rawValue: 1 << 3)`
+            /// `ShippingOption.Set(rawValue: 1 << 3)` option.
             public static let standard = Self(bitIndex: 3)
             /// Combination of all set options.
             public static let all: Self = [nextDay, secondDay, priority, standard]
@@ -170,19 +170,19 @@ let publicEnumExpandedSource = #"""
                 "OptionSet(\(rawValue.binaryString))"
             }
             /// Array of `ShippingOption` enum cases in the `rawValue` bit mask, ordered by declaration.
-            public var options: [ShippingOption] {
-                [(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)].reduce(into: []) { result, option in
-                    if contains(option.0) {
-                        result.append(option.1)
+            public var cases: [ShippingOption] {
+                [(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)].reduce(into: []) { result, element in
+                    if contains(element.0) {
+                        result.append(element.1)
                     }
                 }
             }
             /// Creates a new option set with the specified array of `ShippingOption` enum cases.
-            /// - Parameter options: The array of `ShippingOption` enum cases corresponding to the `rawValue` bit mask.
-            public init(options: [ShippingOption]) {
-                self = [(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)].reduce(into: []) { result, option in
-                    if options.contains(option.1) {
-                        result.formUnion(option.0)
+            /// - Parameter cases: The array of `ShippingOption` enum cases corresponding to the `rawValue` bit mask.
+            public init(cases: [ShippingOption]) {
+                self = [(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)].reduce(into: []) { result, element in
+                    if cases.contains(element.1) {
+                        result.formUnion(element.0)
                     }
                 }
             }
@@ -207,7 +207,7 @@ final class EnumOptionSetTests: XCTestCase {
 
                 struct Set: OptionSet, CustomStringConvertible, CustomDebugStringConvertible {
             \(rawValueExpandedSource("Int"))
-            \(defaultMembersExpandedSource)
+            \(defaultOptionsExpandedSource)
             \(defaultCombinationExpandedSource)
             \(bitIndicesExpandedSource)
             \(descriptionExpandedSource(#"[0: "nextDay", 1: "secondDay", 2: "priority", 3: "standard"]"#))
@@ -265,18 +265,18 @@ final class EnumOptionSetTests: XCTestCase {
 
                 struct Set: OptionSet, CustomStringConvertible, CustomDebugStringConvertible {
             \(rawValueExpandedSource("Int"))
-                    /// `ShippingOption.Set(rawValue: 1 << 0)`
+                    /// `ShippingOption.Set(rawValue: 1 << 0)` option.
                     static let nextDay = Self(bitIndex: 0)
-                    /// `ShippingOption.Set(rawValue: 1 << 1)`
+                    /// `ShippingOption.Set(rawValue: 1 << 1)` option.
                     static let secondDay = Self(bitIndex: 1)
-                    /// `ShippingOption.Set(rawValue: 1 << 3)`
+                    /// `ShippingOption.Set(rawValue: 1 << 3)` option.
                     static let priority = Self(bitIndex: 3)
-                    /// `ShippingOption.Set(rawValue: 1 << 4)`
+                    /// `ShippingOption.Set(rawValue: 1 << 4)` option.
                     static let standard = Self(bitIndex: 4)
             \(defaultCombinationExpandedSource)
             \(bitIndicesExpandedSource)
             \(descriptionExpandedSource(#"[0: "nextDay", 1: "secondDay", 3: "priority", 4: "standard"]"#))
-            \(optionsExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)]"))
+            \(casesExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)]"))
                 }
             }
             """,
@@ -359,12 +359,12 @@ final class EnumOptionSetTests: XCTestCase {
 
                 struct Set: OptionSet, CustomStringConvertible, CustomDebugStringConvertible {
             \(rawValueExpandedSource("Int"))
-            \(defaultMembersExpandedSource)
-                    /// `ShippingOption.Set(rawValue: 1 << 4)`
+            \(defaultOptionsExpandedSource)
+                    /// `ShippingOption.Set(rawValue: 1 << 4)` option.
                     static let all = Self(bitIndex: 4)
             \(bitIndicesExpandedSource)
             \(descriptionExpandedSource(#"[0: "nextDay", 1: "secondDay", 2: "priority", 3: "standard", 4: "all"]"#))
-            \(optionsExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard), (Self.all, ShippingOption.all)]"))
+            \(casesExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard), (Self.all, ShippingOption.all)]"))
                 }
             }
             """,
@@ -395,12 +395,12 @@ final class EnumOptionSetTests: XCTestCase {
 
                 struct Set: OptionSet, CustomStringConvertible, CustomDebugStringConvertible {
             \(rawValueExpandedSource("Int"))
-            \(defaultMembersExpandedSource)
-                    /// `ShippingOption.Set(rawValue: 1 << 4)`
+            \(defaultOptionsExpandedSource)
+                    /// `ShippingOption.Set(rawValue: 1 << 4)` option.
                     static let `all` = Self(bitIndex: 4)
             \(bitIndicesExpandedSource)
             \(descriptionExpandedSource(#"[0: "nextDay", 1: "secondDay", 2: "priority", 3: "standard", 4: "`all`"]"#))
-            \(optionsExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard), (Self.`all`, ShippingOption.`all`)]"))
+            \(casesExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard), (Self.`all`, ShippingOption.`all`)]"))
                 }
             }
             """,
@@ -426,18 +426,18 @@ final class EnumOptionSetTests: XCTestCase {
 
                 struct Set: OptionSet, CustomStringConvertible, CustomDebugStringConvertible {
             \(rawValueExpandedSource("UInt8"))
-                    /// `ShippingOption.Set(rawValue: 1 << 0)`
+                    /// `ShippingOption.Set(rawValue: 1 << 0)` option.
                     static let nextDay = Self(bitIndex: 0)
-                    /// `ShippingOption.Set(rawValue: 1 << 1)`
+                    /// `ShippingOption.Set(rawValue: 1 << 1)` option.
                     static let secondDay = Self(bitIndex: 1)
-                    /// `ShippingOption.Set(rawValue: 1 << 7)`
+                    /// `ShippingOption.Set(rawValue: 1 << 7)` option.
                     static let priority = Self(bitIndex: 7)
-                    /// `ShippingOption.Set(rawValue: 1 << 8)`
+                    /// `ShippingOption.Set(rawValue: 1 << 8)` option.
                     static let standard = Self(bitIndex: 8)
             \(defaultCombinationExpandedSource)
             \(bitIndicesExpandedSource)
             \(descriptionExpandedSource(#"[0: "nextDay", 1: "secondDay", 7: "priority", 8: "standard"]"#))
-            \(optionsExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)]"))
+            \(casesExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)]"))
                 }
             }
             """,
@@ -468,18 +468,18 @@ final class EnumOptionSetTests: XCTestCase {
 
                 struct Set: OptionSet, CustomStringConvertible, CustomDebugStringConvertible {
             \(rawValueExpandedSource("Int"))
-                    /// `ShippingOption.Set(rawValue: 1 << 0)`
+                    /// `ShippingOption.Set(rawValue: 1 << 0)` option.
                     static let nextDay = Self(bitIndex: 0)
-                    /// `ShippingOption.Set(rawValue: 1 << 1)`
+                    /// `ShippingOption.Set(rawValue: 1 << 1)` option.
                     static let secondDay = Self(bitIndex: 1)
-                    /// `ShippingOption.Set(rawValue: 1 << 63)`
+                    /// `ShippingOption.Set(rawValue: 1 << 63)` option.
                     static let priority = Self(bitIndex: 63)
-                    /// `ShippingOption.Set(rawValue: 1 << 64)`
+                    /// `ShippingOption.Set(rawValue: 1 << 64)` option.
                     static let standard = Self(bitIndex: 64)
             \(defaultCombinationExpandedSource)
             \(bitIndicesExpandedSource)
             \(descriptionExpandedSource(#"[0: "nextDay", 1: "secondDay", 63: "priority", 64: "standard"]"#))
-            \(optionsExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)]"))
+            \(casesExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)]"))
                 }
             }
             """,
@@ -518,13 +518,13 @@ final class EnumOptionSetTests: XCTestCase {
                     init(bitIndex: Int) {
                         self.init(rawValue: 1 << bitIndex)
                     }
-                    /// `ShippingOption.Set(rawValue: 1 << 0)`
+                    /// `ShippingOption.Set(rawValue: 1 << 0)` option.
                     static let nextDay = Self(bitIndex: 0)
-                    /// `ShippingOption.Set(rawValue: 1 << 1)`
+                    /// `ShippingOption.Set(rawValue: 1 << 1)` option.
                     static let secondDay = Self(bitIndex: 1)
-                    /// `ShippingOption.Set(rawValue: 1 << 63)`
+                    /// `ShippingOption.Set(rawValue: 1 << 63)` option.
                     static let priority = Self(bitIndex: 63)
-                    /// `ShippingOption.Set(rawValue: 1 << 64)`
+                    /// `ShippingOption.Set(rawValue: 1 << 64)` option.
                     static let standard = Self(bitIndex: 64)
             \(defaultCombinationExpandedSource)
                     /// Set of indices corresponding to the `1` bits in the `rawValue` bit mask.
@@ -543,7 +543,7 @@ final class EnumOptionSetTests: XCTestCase {
                         }
                     }
             \(descriptionExpandedSource(#"[0: "nextDay", 1: "secondDay", 63: "priority", 64: "standard"]"#))
-            \(optionsExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)]"))
+            \(casesExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)]"))
                 }
             }
             """,
@@ -569,10 +569,10 @@ final class EnumOptionSetTests: XCTestCase {
 
                 struct Set: OptionSet {
             \(rawValueExpandedSource("Int"))
-            \(defaultMembersExpandedSource)
+            \(defaultOptionsExpandedSource)
             \(defaultCombinationExpandedSource)
             \(bitIndicesExpandedSource)
-            \(optionsExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)]"))
+            \(casesExpandedSource("[(Self.nextDay, ShippingOption.nextDay), (Self.secondDay, ShippingOption.secondDay), (Self.priority, ShippingOption.priority), (Self.standard, ShippingOption.standard)]"))
                 }
             }
             """,
@@ -651,7 +651,7 @@ final class EnumOptionSetTests: XCTestCase {
                     static let all: Self = []
             \(bitIndicesExpandedSource)
             \(descriptionExpandedSource("[]"))
-            \(optionsExpandedSource("[]"))
+            \(casesExpandedSource("[]"))
                 }
             }
             """,

@@ -24,7 +24,7 @@ enum ShippingOption {
 ```
 > [!NOTE]
 > The macro generates a nested `Set` structure that conforms to the `OptionSet` protocol, using `Int` as the default raw value type and extracting options from the names of enum cases in the order of declaration.\
-> It also generates the `all` property as an option composition, along with some other helper members.
+> It also generates the `all` property as an option composition, along with some other helper structure members.
 
 Then you can create a typealias, and extend the option set with additional composite options:
 ```Swift
@@ -37,17 +37,17 @@ extension ShippingOptions {
 ## Advanced usage
 The macro also supports custom raw value types and indices:
 ```Swift
-@EnumOptionSet<Int8>    // OptionSet.RawValue = Int8
+@EnumOptionSet<UInt8>       // OptionSet.RawValue = UInt8
 enum ShippingOption: Int {
-    case nextDay        // Starting with index 0.       (rawValue: 1 << 0)
-    case secondDay      // Incrementing by 1.           (rawValue: 1 << 1)
-    case priority = 3   // Skipping index 2.            (rawValue: 1 << 3)
-    case standard       // Continuing to increment.     (rawValue: 1 << 4)
+    case nextDay            // Starting with index 0.       (rawValue: 1 << 0)
+    case secondDay          // Incrementing by 1.           (rawValue: 1 << 1)
+    case priority = 3       // Skipping index 2.            (rawValue: 1 << 3)
+    case standard           // Continuing to increment.     (rawValue: 1 << 4)
 }
 ```
 > [!TIP]
-> The `OptionSet.RawValue` type can also be declared as the macro's first argument `@EnumOptionSet(Int8.self)`.\
-> Currently, an even shorter form `@EnumOptionSet(Int8)` works, but this may be a bug of the Swift syntax analyzer, so use it at your own risk.
+> The `OptionSet.RawValue` type can also be declared as the macro's first argument `@EnumOptionSet(UInt8.self)`.\
+> Currently, an even shorter form `@EnumOptionSet(UInt8)` works, but this may be a bug of the Swift syntax analyzer, so use it at your own risk.
 
 > [!NOTE]
 > Enum raw values that are expressed in ways other than integer literals, as well as associated values, are ignored.\
@@ -58,9 +58,9 @@ Specifically, it performs checks for duplicate indices and raw value overflow. A
 
 Both of checks can be disabled with the `checkOverflow` attribute flag:
 ```Swift
-@EnumOptionSet<Int8>(checkOverflow: false)
+@EnumOptionSet<UInt8>(checkOverflow: false)
 enum ShippingOption: Int {
-    case nextDay, secondDay, priority, standard = 8 // Option bit index 8 is out of range for 'Int8'.
+    case nextDay, secondDay, priority, standard = 8 // Option bit index 8 is out of range for 'UInt8'.
 }
 ```
 > [!NOTE]
@@ -76,13 +76,13 @@ ShippingOptions.express.debugDescription // "OptionSet(0b00000011)"
 ```
 The `CustomStringConvertible` and `CustomDebugStringConvertible` protocol conformance can be disabled by setting the `generateDescription` attribute flag to `false`.
 
-### Options
-The `OptionSet` maintains a connection to the enum cases through the `options` property and initializer.
+### Cases
+The `OptionSet` maintains a connection to the enum through the `cases` property and initializer.
 ```Swift
-let shippingOptions = ShippingOptions(options: [.secondDay, .priority])
-shippingOptions.options // [ShippingOption.secondDay, ShippingOption.priority]
+let shippingOptions = ShippingOptions(cases: [.secondDay, .priority])
+shippingOptions.cases // [ShippingOption.secondDay, ShippingOption.priority]
 ```
-These are not generated for enums with associated values.
+These structure members are not generated for enums with associated values.
 
 ### Subscript
 The macro contains an `OptionSet` extension for accessing options as boolean flags using subscript notation:
